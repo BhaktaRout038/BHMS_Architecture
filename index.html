@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bridge Health Mangement System Architecture</title>
+  <!-- Mermaid.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    // Initialize Mermaid when the page loads
+    mermaid.initialize({ startOnLoad: true });
+  </script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 1rem;
+      max-width: 900px;
+      margin: auto;
+    }
+    .mermaid {
+      background: white;
+      border: 1px solid #ddd;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+    h2 {
+      text-align: center;
+      font-weight: 700;
+    }
+    h3 {
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+    ul {
+      margin-left: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #777;
+      border-top: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Bridge Health Mangement System Architecture Design</h2>
+
+  <!-- Mermaid Diagram Container -->
+  <div class="mermaid">
+graph LR
+    %% Edge Layer
+    subgraph EDGE [🏗️ Edge Layer - On Bridge]
+        Vehicle["🌉 Bridge"]
+        Sensors["🔧 Sensors<br>Inclinometer<br>Accelerometer<br>Strain Gauge<br>Displacement"]
+        Vehicle --> Sensors
+    end
+
+    %% Network Layer
+    subgraph NETWORK [🌐 Local Network Layer]
+        Router["🏠 Local Network"]
+        Sensors --> Router
+    end
+
+    %% Backend Layer
+    subgraph BACKEND [🗄️ Central Server - Backend]
+        LPU["💻 Workstation(sensors Services)"]
+        API["🖥️ Central Server<br>Handles HTTP + Auth"]
+        DB["💾 PostgreSQL DB"]
+        Router --> LPU
+        LPU --> API
+        API --> DB
+    end
+
+    %% Frontend Layer
+    subgraph FRONTEND [💻 Frontend - Web Application]
+        WebApp["🌐 Web Application<br>Login & Live Monitoring"]
+        WebApp --> API
+    end
+
+    %% Additional API to DB fetch line
+    API -->|Fetch Sensor Data| DB
+
+    %% Dashed line styles to simulate data flow
+    %% Valid linkStyle indexes (in order of arrow definitions above)
+    linkStyle 0,1,2,3,4,5 stroke-dasharray: 6, 4;
+  </div>
+
+  <!-- Visible Workflow Explanation -->
+  <section>
+    <h3>Workflow Explanation</h3>
+    <p><strong>1. Edge Layer (On Bridge):</strong></p>
+    <ul>
+      <li>Sensors (Inclinometer, Accelerometer, Strain Gauge,Displacement) collect real-time data from the bridge.</li>
+      <li>Sensors send MQTT data over the Local Network to the Central Server through Sensors services.</li>
+    </ul>
+    <p><strong>2. Network Layer:</strong></p>
+    <ul>
+      <li>Local Network transmits sensor data from the edge to the Workstation/Central Server.</li>
+    </ul>
+    <p><strong>3. Central Server - Backend Layer:</strong></p>
+    <ul>
+      <li>In Workstation sensors Services run on the Central Server, processing incoming sensor data.</li>
+      <li>Sensor data is stored and retrieved from the PostgreSQL database.</li>
+      <li>The Central Server handles HTTP requests, authentication, and serves data.</li>
+      
+    </ul>
+    <p><strong>4. Frontend Layer:</strong></p>
+    <ul>
+      <li>The Web Application authenticates users and requests sensor data from the Central Server.</li>
+      <li>The Web Application displays live monitoring data.</li>
+    </ul>
+    <p><strong>Data Flow Summary:</strong></p>
+    <ul>
+      <li>Sensors → Local Network (MQTT/HTTP)</li>
+      <li>Local Network → Central Server (Workstation sensors Services)</li>
+      <li>Central Server → Database (Store and Fetch Data)</li>
+      <li>Web Application → Central Server (Login and Data Requests)</li>
+    </ul>
+  </section>
+
+    <!-- Footer -->
+  <footer>
+    ©2025 TrafikSol ITS Technologies Limited. Created by Bhakta Charan Rout.
+  </footer>
+</body>
+</html>
